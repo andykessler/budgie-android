@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import io.akessler.budgie.core.model.Transaction;
+import io.akessler.budgie.core.utils.TransactionReader;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -43,7 +46,11 @@ public class CategoryActivity extends AppCompatActivity {
             }
         });
 
-        testFirebaseStuff();
+        List<Transaction> list = TransactionReader.readFromCSV(getResources().openRawResource(R.raw.credit_2016_09_08));
+        for(Transaction t : list) {
+            System.out.println(t.toString());
+        }
+
     }
 
     public void testFirebaseStuff() {
@@ -56,20 +63,20 @@ public class CategoryActivity extends AppCompatActivity {
 //        category.put("", "")
 
         db = FirebaseFirestore.getInstance();
-//        db.collection("users")
-//                .add(user)
-//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-//                        System.out.println(documentReference.getId());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        System.out.println(e.toString());
-//                    }
-//                });
+        db.collection("transactions")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        System.out.println(documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println(e.toString());
+                    }
+                });
 
         db.collection("categories").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
