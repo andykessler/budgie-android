@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.akessler.budgie.core.model.AccountType;
 import io.akessler.budgie.core.model.Transaction;
 import io.akessler.budgie.core.utils.TransactionReader;
 
@@ -46,8 +47,14 @@ public class CategoryActivity extends AppCompatActivity {
             }
         });
 
-        List<Transaction> list = TransactionReader.readFromCSV(getResources().openRawResource(R.raw.credit_2016_09_08));
+        List<Transaction> list = TransactionReader.readFromCSV(AccountType.CREDIT, getResources().openRawResource(R.raw.credit_2016_09_08));
         for(Transaction t : list) {
+            System.out.println(t.toString());
+        }
+
+        // FIXME this actually contains data for both CHECKING and SAVINGS
+        List<Transaction> list2 = TransactionReader.readFromCSV(AccountType.CHECKING, getResources().openRawResource(R.raw.debit_2016_09_08));
+        for(Transaction t : list2) {
             System.out.println(t.toString());
         }
 
