@@ -1,7 +1,7 @@
 package io.akessler.budgie.core.model;
 
-import java.math.BigDecimal;
-//import java.util.Map;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Transaction {
 
@@ -16,7 +16,7 @@ public class Transaction {
 
     String accountId;
 
-    BigDecimal amount;
+    int amount; // storing as cents (hence integer)
 
     String authDate;
 
@@ -61,11 +61,11 @@ public class Transaction {
         this.accountId = accountId;
     }
 
-    public BigDecimal getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
@@ -105,5 +105,18 @@ public class Transaction {
                 ", postDate='" + postDate + '\'' +
                 ", categoryId='" + categoryId + '\'' +
                 '}';
+    }
+
+    // might not need this if we have a serializer
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
+        map.put("description", description);
+        map.put("accountId", accountId);
+        map.put("amount", amount);
+        map.put("authDate", authDate);
+        map.put("postDate", postDate);
+        map.put("categoryId", categoryId);
+        return map;
     }
 }

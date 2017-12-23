@@ -14,10 +14,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,56 +49,46 @@ public class CategoryActivity extends AppCompatActivity {
             }
         });
 
-        List<Transaction> list = TransactionReader.readFromCSV(AccountType.CREDIT, getResources().openRawResource(R.raw.credit_2016_09_08));
+        List<Transaction> list = TransactionReader.readFromCSV(AccountType.CREDIT, getResources().openRawResource(R.raw.credit_test));
         for(Transaction t : list) {
             System.out.println(t.toString());
         }
 
         // FIXME this actually contains data for both CHECKING and SAVINGS
-        List<Transaction> list2 = TransactionReader.readFromCSV(AccountType.CHECKING, getResources().openRawResource(R.raw.debit_2016_09_08));
+        List<Transaction> list2 = TransactionReader.readFromCSV(AccountType.CHECKING, getResources().openRawResource(R.raw.debit_test));
         for(Transaction t : list2) {
             System.out.println(t.toString());
         }
 
+        System.out.println("Attempting to put into Firestore...");
+        putTransactionsInFirebase(list);
+        putTransactionsInFirebase(list2);
+        System.out.println("Done putting into Firestore.");
     }
 
-    public void testFirebaseStuff() {
-        Map<String, Object> user = new HashMap<>();
-//        user.put("firstName", "Hello");
-//        user.put("lastName", "World");
-//        user.put("email", "hello@world.com");
+    public void putTransactionsInFirebase(List<Transaction> transactionList) {
 
-//        Map<String, Object> category = new HashMap<>();
-//        category.put("", "")
+        OnSuccessListener<DocumentReference> onSuccessListener = new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                System.out.println("DocumentSnapshot written with ID: " + documentReference.getId());
+            }
+        };
+
+        OnFailureListener onFailureListener = new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.err.println(e.toString());
+            }
+        };
 
         db = FirebaseFirestore.getInstance();
-        db.collection("transactions")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        System.out.println(documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        System.out.println(e.toString());
-                    }
-                });
-
-        db.collection("categories").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult()) {
-                        System.out.println(document.getId() + " => " + document.getData());
-                    }
-                } else {
-                    System.out.println("Error getting documents." + task.getException().toString());
-                }
-            }
-        });
+        CollectionReference transactions = db.collection("transactions");
+        for(Transaction t : transactionList) {
+            transactions.add(t)
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        }
     }
 
     @Override
