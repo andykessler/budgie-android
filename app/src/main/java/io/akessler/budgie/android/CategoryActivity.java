@@ -1,33 +1,29 @@
 package io.akessler.budgie.android;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import io.akessler.budgie.core.model.AccountType;
+import io.akessler.budgie.core.model.Category;
 import io.akessler.budgie.core.model.Transaction;
-import io.akessler.budgie.core.utils.TransactionReader;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -37,36 +33,37 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "TODO Implement create new category", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
-        List<Transaction> list = TransactionReader.readFromCSV(AccountType.CREDIT, getResources().openRawResource(R.raw.credit_test));
-        for(Transaction t : list) {
-            System.out.println(t.toString());
-        }
+//        List<Transaction> list = TransactionReader.readFromCSV(AccountType.CREDIT, getResources().openRawResource(R.raw.credit_test));
+//        for(Transaction t : list) {
+//            System.out.println(t.toString());
+//        }
+//
+//        // FIXME this actually contains data for both CHECKING and SAVINGS
+//        List<Transaction> list2 = TransactionReader.readFromCSV(AccountType.CHECKING, getResources().openRawResource(R.raw.debit_test));
+//        for(Transaction t : list2) {
+//            System.out.println(t.toString());
+//        }
+//
+//        putTransactionsInFirestore(list);
+//        putTransactionsInFirestore(list2);
 
-        // FIXME this actually contains data for both CHECKING and SAVINGS
-        List<Transaction> list2 = TransactionReader.readFromCSV(AccountType.CHECKING, getResources().openRawResource(R.raw.debit_test));
-        for(Transaction t : list2) {
-            System.out.println(t.toString());
-        }
-
-        System.out.println("Attempting to put into Firestore...");
-        putTransactionsInFirebase(list);
-        putTransactionsInFirebase(list2);
-        System.out.println("Done putting into Firestore.");
+        loadCategoriesFromFirestore();
     }
 
-    public void putTransactionsInFirebase(List<Transaction> transactionList) {
+
+    public void putTransactionsInFirestore(List<Transaction> transactionList) {
 
         OnSuccessListener<DocumentReference> onSuccessListener = new OnSuccessListener<DocumentReference>() {
             @Override
@@ -78,7 +75,7 @@ public class CategoryActivity extends AppCompatActivity {
         OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.err.println(e.toString());
+                System.err.println(e.getMessage());
             }
         };
 
@@ -89,6 +86,46 @@ public class CategoryActivity extends AppCompatActivity {
                     .addOnSuccessListener(onSuccessListener)
                     .addOnFailureListener(onFailureListener);
         }
+    }
+
+    private static List<Category> categoryList;
+    public void loadCategoriesFromFirestore() {
+
+        final Context context = this; // FIXME probably not way this should be done in future :)
+
+        OnSuccessListener<QuerySnapshot> onSuccessListener = new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+
+                categoryList = documentSnapshots.toObjects(Category.class);
+                categoryList.addAll(categoryList);
+                categoryList.addAll(categoryList);
+                categoryList.addAll(categoryList);
+
+                for(Category c : categoryList) {
+                    System.out.println(c.toString());
+                }
+
+                RecyclerView rvCategories = findViewById(R.id.rvCategories);
+                CategoriesAdapter adapter = new CategoriesAdapter(context, categoryList);
+                rvCategories.setAdapter(adapter);
+                rvCategories.setLayoutManager(new LinearLayoutManager(context));
+
+            }
+        };
+
+        OnFailureListener onFailureListener = new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.err.println(e.getMessage());
+            }
+        };
+
+        db = FirebaseFirestore.getInstance();
+        CollectionReference categories = db.collection("categories");
+        categories.get()
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
     }
 
     @Override
