@@ -1,6 +1,7 @@
 package io.akessler.budgie.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Category {
@@ -29,14 +30,18 @@ public class Category {
             new Category("Uncategorized", null, null)
     };
 
+    public Category() {
+        this.name = "";
+        this.parent = null;
+        this.children = new ArrayList<>();
+    }
+
     public Category(String name, String parent, String[] children) {
         this.name = name;
         this.parent = parent;
-        this.children = new ArrayList<>(); // use Arrays.asList(T...) instead?
+        this.children = new ArrayList<>();
         if(children != null) {
-            for (String s : children) {
-                this.children.add(s);
-            }
+            this.children.addAll(Arrays.asList(children));
         }
     }
 
