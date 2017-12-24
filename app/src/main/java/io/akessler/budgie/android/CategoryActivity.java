@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
+import io.akessler.budgie.core.model.Budget;
 import io.akessler.budgie.core.model.Category;
 import io.akessler.budgie.core.model.Transaction;
 
@@ -40,8 +40,10 @@ public class CategoryActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "TODO Implement create new category", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "TODO Implement create new category", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                loadCategoriesFromFirestore();
+
             }
         });
 
@@ -59,7 +61,9 @@ public class CategoryActivity extends AppCompatActivity {
 //        putTransactionsInFirestore(list);
 //        putTransactionsInFirestore(list2);
 
-        loadCategoriesFromFirestore();
+//        loadCategoriesFromFirestore();
+
+        loadBudgetsFromFirestore();
     }
 
 
@@ -90,17 +94,14 @@ public class CategoryActivity extends AppCompatActivity {
 
     private static List<Category> categoryList;
     public void loadCategoriesFromFirestore() {
-
         final Context context = this; // FIXME probably not way this should be done in future :)
-
         OnSuccessListener<QuerySnapshot> onSuccessListener = new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot documentSnapshots) {
 
+                System.out.println("Hello");
+
                 categoryList = documentSnapshots.toObjects(Category.class);
-                categoryList.addAll(categoryList);
-                categoryList.addAll(categoryList);
-                categoryList.addAll(categoryList);
 
                 for(Category c : categoryList) {
                     System.out.println(c.toString());
@@ -113,7 +114,39 @@ public class CategoryActivity extends AppCompatActivity {
 
             }
         };
+        OnFailureListener onFailureListener = new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("Goodbye");
 
+                System.err.println(e.getMessage());
+            }
+        };
+
+        db = FirebaseFirestore.getInstance();
+        CollectionReference categories = db.collection("categories");
+        categories.get()
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }
+
+    private static List<Budget> budgetList;
+    public void loadBudgetsFromFirestore() {
+        final Context context = this; // FIXME probably not way this should be done in future :)
+        OnSuccessListener<QuerySnapshot> onSuccessListener = new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                budgetList = documentSnapshots.toObjects(Budget.class);
+
+                for(Budget b : budgetList) {
+                    System.out.println(b.toString());
+                }
+//                RecyclerView rvBudgets = findViewById(R.id.rvBudgets);
+//                BudgetsAdapter adapter = new BudgetsAdapter(context, budgetList);
+//                rvBudgets.setAdapter(adapter);
+//                rvBudgets.setLayoutManager(new LinearLayoutManager(context));
+            }
+        };
         OnFailureListener onFailureListener = new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -122,8 +155,8 @@ public class CategoryActivity extends AppCompatActivity {
         };
 
         db = FirebaseFirestore.getInstance();
-        CollectionReference categories = db.collection("categories");
-        categories.get()
+        CollectionReference budgets = db.collection("budgets");
+        budgets.get()
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener);
     }

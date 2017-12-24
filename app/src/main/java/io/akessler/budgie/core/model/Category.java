@@ -4,21 +4,11 @@ import java.util.List;
 
 public class Category {
 
-//    String id;
+    private String name;
 
-    String name;
+    private String parent;
 
-    String description;
-
-    int amount;
-
-    int extremum;
-
-    String parent;
-
-    List<String> children;
-
-    // TODO lombok
+    private List<String> children;
 
     public String getName() {
         return name;
@@ -26,30 +16,6 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public int getExtremum() {
-        return extremum;
-    }
-
-    public void setExtremum(int extremum) {
-        this.extremum = extremum;
     }
 
     public String getParent() {
@@ -72,9 +38,6 @@ public class Category {
     public String toString() {
         return "Category{" +
                 "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", amount=" + amount +
-                ", extremum=" + extremum +
                 ", parent='" + parent + '\'' +
                 ", children=" + children +
                 '}';
