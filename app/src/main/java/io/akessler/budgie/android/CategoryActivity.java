@@ -19,6 +19,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.akessler.budgie.core.model.Budget;
@@ -62,8 +64,9 @@ public class CategoryActivity extends AppCompatActivity {
 //        putTransactionsInFirestore(list2);
 
 //        loadCategoriesFromFirestore();
+//        loadBudgetsFromFirestore();
 
-        loadBudgetsFromFirestore();
+//        putCategoriesInFirestore(Arrays.asList(Category.MAIN_CATEGORIES));
     }
 
 
@@ -87,6 +90,31 @@ public class CategoryActivity extends AppCompatActivity {
         CollectionReference transactions = db.collection("transactions");
         for(Transaction t : transactionList) {
             transactions.add(t)
+                    .addOnSuccessListener(onSuccessListener)
+                    .addOnFailureListener(onFailureListener);
+        }
+    }
+
+    public void putCategoriesInFirestore(List<Category> categoryList) {
+
+        OnSuccessListener<DocumentReference> onSuccessListener = new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                System.out.println("DocumentSnapshot written with ID: " + documentReference.getId());
+            }
+        };
+
+        OnFailureListener onFailureListener = new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.err.println(e.getMessage());
+            }
+        };
+
+        db = FirebaseFirestore.getInstance();
+        CollectionReference categories = db.collection("categories");
+        for(Category c : categoryList) {
+            categories.add(c)
                     .addOnSuccessListener(onSuccessListener)
                     .addOnFailureListener(onFailureListener);
         }

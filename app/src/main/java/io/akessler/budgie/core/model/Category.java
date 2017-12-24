@@ -1,8 +1,44 @@
 package io.akessler.budgie.core.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
+
+    public static final Category[] MAIN_CATEGORIES = {
+            new Category("Bills & Utilities",null, null),
+            new Category("Business Services", null, null),
+            new Category("Education", null, null),
+            new Category("Entertainment", null, null),
+            new Category("Fees & Charges", null, null),
+            new Category("Financial", null, null),
+            new Category("Food & Dining", null, null),
+            new Category("Gifts & Donations", null, null),
+            new Category("Health & Fitness", null, null),
+            new Category("Home", null, null),
+            new Category("Income", null, null),
+            new Category("Kids", null, null),
+            new Category("Loans", null, null),
+            new Category("Misc Expenses", null, null),
+            new Category("Personal Care", null, null),
+            new Category("Pets", null, null),
+            new Category("Shopping", null, null),
+            new Category("Taxes", null, null),
+            new Category("Transfer", null, null),
+            new Category("Travel", null, null),
+            new Category("Uncategorized", null, null)
+    };
+
+    public Category(String name, String parent, String[] children) {
+        this.name = name;
+        this.parent = parent;
+        this.children = new ArrayList<>(); // use Arrays.asList(T...) instead?
+        if(children != null) {
+            for (String s : children) {
+                this.children.add(s);
+            }
+        }
+    }
 
     private String name;
 
@@ -30,7 +66,7 @@ public class Category {
         return children;
     }
 
-    public void setChildren(List<String> children) {
+    public void setChildren(List<String> children) { // Assumption that we don't make our own copy.
         this.children = children;
     }
 
