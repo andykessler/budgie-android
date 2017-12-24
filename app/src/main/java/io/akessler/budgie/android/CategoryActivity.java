@@ -2,22 +2,22 @@ package io.akessler.budgie.android;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.Arrays;
-
-import io.akessler.budgie.core.model.Budget;
-import io.akessler.budgie.core.model.Category;
-import io.akessler.budgie.core.model.Transaction;
 import io.akessler.budgie.core.utils.FirestoreFacade;
 
 public class CategoryActivity extends AppCompatActivity {
 
     private FirestoreFacade firestore;
+
+    private FragmentManager fragmentManager;
+
+    private CategoryCreateDialog createDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +27,15 @@ public class CategoryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         firestore = new FirestoreFacade();
-        firestore.addCategories(Arrays.asList(Category.MAIN_CATEGORIES));
+        fragmentManager = getSupportFragmentManager();
+        createDialog = new CategoryCreateDialog();
+//        firestore.addCategories(Arrays.asList(Category.MAIN_CATEGORIES));
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "TODO Implement create new category", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                firestore.loadCategories();
+                createDialog.show(fragmentManager,"category_create_dialog");
             }
         });
 
