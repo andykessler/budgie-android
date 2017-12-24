@@ -17,12 +17,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         public TextView nameTextView;
 
-        public TextView extremumTextView;
-
         public ViewHolder(View itemView) {
             super(itemView);
-            nameTextView = (TextView) itemView.findViewById(R.id.textName);
-            extremumTextView = (TextView) itemView.findViewById(R.id.textExtremum);
+            nameTextView = itemView.findViewById(R.id.textName);
         }
 
     }
@@ -53,7 +50,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public void onBindViewHolder(CategoriesAdapter.ViewHolder viewHolder, int position) {
         Category category = mCategories.get(position);
         viewHolder.nameTextView.setText(category.getName());
-        viewHolder.extremumTextView.setText(String.valueOf(category.getExtremum()));
     }
 
     @Override

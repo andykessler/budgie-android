@@ -24,11 +24,6 @@ public class Transaction {
 
     String categoryId;
 
-    // maybe create wrapper object which represents this? need to validate adds to 100%
-//    Map<String, Float> categoryDistribution;
-
-    // TODO Consider using annotations (lombok)
-
     public String getId() {
         return id;
     }
