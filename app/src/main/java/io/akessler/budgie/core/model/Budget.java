@@ -1,5 +1,8 @@
 package io.akessler.budgie.core.model;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Budget {
 
     String categoryId;

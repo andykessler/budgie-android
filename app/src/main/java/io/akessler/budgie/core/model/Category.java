@@ -1,9 +1,12 @@
 package io.akessler.budgie.core.model;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@IgnoreExtraProperties
 public class Category {
 
     public static final Category[] MAIN_CATEGORIES = {

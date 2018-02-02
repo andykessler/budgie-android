@@ -1,8 +1,11 @@
 package io.akessler.budgie.core.model;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@IgnoreExtraProperties
 public class Transaction {
 
     // should we also track source id?

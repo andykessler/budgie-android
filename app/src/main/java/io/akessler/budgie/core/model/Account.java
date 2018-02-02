@@ -1,7 +1,10 @@
 package io.akessler.budgie.core.model;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.math.BigDecimal;
 
+@IgnoreExtraProperties
 public class Account {
 
     // eventually will be tied to a user.
