@@ -4,32 +4,56 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import io.akessler.budgie.core.utils.FirestoreFacade;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.akessler.budgie.core.model.Category;
 
 public class CategoryActivity extends AppCompatActivity {
 
-    private FirestoreFacade firestore;
+    private FirebaseFirestore db;
+
+    private CollectionReference categoriesRef;
 
     private FragmentManager fragmentManager;
 
     private CategoryCreateDialog createDialog;
 
+    List<Category> categoryList;
+
+    RecyclerView rvCategories;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        firestore = new FirestoreFacade();
         fragmentManager = getSupportFragmentManager();
         createDialog = new CategoryCreateDialog();
-//        firestore.addCategories(Arrays.asList(Category.MAIN_CATEGORIES));
+
+//      Arrays.asList(Category.MAIN_CATEGORIES);
+        db = FirebaseFirestore.getInstance();
+        loadCategories();
+
+        rvCategories = findViewById(R.id.rvCategories);
+        rvCategories.setAdapter(new CategoriesAdapter(this, categoryList));
+        rvCategories.setLayoutManager(new LinearLayoutManager(this));
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +74,23 @@ public class CategoryActivity extends AppCompatActivity {
 //            System.out.println(t.toString());
 //        }
 
+    }
+
+    private void loadCategories() {
+        categoriesRef = db.collection("categories");
+        categoryList = new ArrayList<>();
+
+        OnSuccessListener<QuerySnapshot> onSuccessListener = new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                categoryList = documentSnapshots.toObjects(Category.class);
+                ((CategoriesAdapter) rvCategories.getAdapter()).updateCategories(categoryList); // hmm
+//                for(Category c : categoryList) {
+//                    System.out.println(c.toString());
+//                }
+            }
+        };
+        categoriesRef.get().addOnSuccessListener(onSuccessListener);
     }
 
     @Override

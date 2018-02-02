@@ -57,4 +57,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         return categories.size();
     }
 
+    public void updateCategories(List<Category> categories) {
+        // do we really want to clear _everything_?
+        this.categories.clear();
+        this.categories.addAll(categories);
+        notifyDataSetChanged();
+    }
 }

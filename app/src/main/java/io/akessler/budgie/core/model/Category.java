@@ -33,10 +33,9 @@ public class Category {
             new Category("Uncategorized", null, null)
     };
 
+    // Default constructor required for calls to
+    // DataSnapshot.getValue(Category.class)
     public Category() {
-        this.name = "";
-        this.parent = null;
-        this.children = new ArrayList<>();
     }
 
     public Category(String name, String parent, String[] children) {
