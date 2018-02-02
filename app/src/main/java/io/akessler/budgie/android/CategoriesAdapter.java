@@ -24,17 +24,17 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     }
 
-    private List<Category> mCategories;
+    private List<Category> categories;
 
-    private Context mContext;
+    private Context context;
 
     public CategoriesAdapter(Context context, List<Category> categories) {
-        mCategories = categories;
-        mContext = context;
+        this.categories = categories;
+        this.context = context;
     }
 
     private Context getContext() {
-        return mContext;
+        return context;
     }
 
     @Override
@@ -48,13 +48,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     @Override
     public void onBindViewHolder(CategoriesAdapter.ViewHolder viewHolder, int position) {
-        Category category = mCategories.get(position);
+        Category category = categories.get(position);
         viewHolder.nameTextView.setText(category.getName());
     }
 
     @Override
     public int getItemCount() {
-        return mCategories.size();
+        return categories.size();
     }
 
 }
